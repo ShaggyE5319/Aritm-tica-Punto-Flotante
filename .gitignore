@@ -1,0 +1,10 @@
+# Ejecutables y binarios
+preprocesador
+ensamblador
+*.exe
+
+# Archivos generados automáticamente por Flex
+lex.yy.c
+
+# Archivos objeto temporales
+*.o
