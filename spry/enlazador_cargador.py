@@ -1,4 +1,8 @@
 
+import re
+from pathlib import Path
+
+
 class EnlazadorCargador:
     def __init__(self, memoria_ram, cpu):
         self.ram = memoria_ram
@@ -15,12 +19,18 @@ class EnlazadorCargador:
             with open(ruta_archivo, 'r', encoding='utf-8') as f:
                 contenido = f.read()
 
-            from assembler import assemble_file
+            from assembler import assemble
             try:
-                palabras = [int(linea.strip(), 16) for linea in contenido.splitlines()
-                            if linea.strip() and not linea.strip().startswith("#")]
+                palabras = self._leer_palabras_hex(contenido)
             except ValueError:
-                palabras = assemble_file(ruta_archivo, base=direccion_base)
+                origen = self._obtener_origen(contenido)
+                if origen is not None:
+                    direccion_base = origen
+                palabras = assemble(
+                    contenido,
+                    base=direccion_base,
+                    source_dir=Path(ruta_archivo).parent,
+                )
 
             cantidad_instrucciones = len(palabras)
             tamanio_bytes = cantidad_instrucciones * 8
@@ -52,3 +62,38 @@ class EnlazadorCargador:
         except (OSError, ValueError, IndexError, KeyError, TypeError) as e:
             print(f"[Error de Carga] No se pudo procesar el archivo: {e}")
             return False
+
+    @staticmethod
+    def _obtener_origen(contenido):
+        coincidencia = re.search(
+            r"(?im)^\s*ORG\s+((?:0[xX])?[0-9A-Fa-f]+)\s*(?:;.*)?$",
+            contenido,
+        )
+        if coincidencia is None:
+            return None
+        return int(coincidencia.group(1), 0)
+
+    @staticmethod
+    def _leer_palabras_hex(contenido):
+        palabras = []
+        tiene_objeto_formateado = False
+        for linea in contenido.splitlines():
+            coincidencia = re.match(
+                r"^\s*0[xX][0-9A-Fa-f]+\s*\|\s*([0-9A-Fa-f]{1,16})\s*$",
+                linea,
+            )
+            if coincidencia is not None:
+                tiene_objeto_formateado = True
+                palabras.append(int(coincidencia.group(1), 16))
+                continue
+            limpia = linea.strip()
+            if limpia and not limpia.startswith("#"):
+                if re.fullmatch(r"(?:0[xX])?[0-9A-Fa-f]{1,16}", limpia):
+                    palabras.append(int(limpia, 16))
+                elif limpia.startswith("MEMORIA") or set(limpia) == {"-"}:
+                    continue
+                elif tiene_objeto_formateado:
+                    raise ValueError(f"Línea hexadecimal inválida: {linea}")
+        if not palabras:
+            raise ValueError("No se encontraron palabras hexadecimales")
+        return palabras
