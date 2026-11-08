@@ -11,24 +11,23 @@ Flex/C. Reconoce:
 Para generarlo con Flex y un compilador C:
 
 ```text
-cd preprocesador
-flex preprocesador.l
-gcc lex.yy.c -o build/preprocesador
+cd spry
+flex -o preprocesador\preprocesador_lex.c preprocesador\preprocesador.l
+gcc preprocesador\preprocesador_lex.c -o bin\preprocesador.exe
 ```
 
 Se puede ejecutar sobre un archivo o sobre la entrada estándar:
 
 ```text
-preprocesador\build\preprocesador.exe ..\ejemplos\preprocesador\ejemplo_define.asm
-preprocesador\build\preprocesador.exe < ..\ejemplos\preprocesador\ejemplo_define.asm
+bin\preprocesador.exe programas\ejemplos\prueba.asm
+bin\preprocesador.exe < programas\ejemplos\prueba.asm
 ```
 
 Tres ejemplos listos para probar desde la terminal:
 
 ```text
-preprocesador\build\preprocesador.exe ejemplos\preprocesador\ejemplo_define.asm
-preprocesador\build\preprocesador.exe ejemplos\preprocesador\ejemplo_include.asm
-preprocesador\build\preprocesador.exe ejemplos\preprocesador\ejemplo_anidado.asm
+bin\preprocesador.exe preprocesador\programa_macro.asm
+bin\preprocesador.exe programas\ejemplos\prueba.asm
 ```
 
 Resultados esperados:
@@ -42,6 +41,11 @@ Resultados esperados:
 Las constantes de límites, tamaños y capacidad están centralizadas en
 [`constantes.h`](../preprocesador/constantes.h), que se incluye durante la compilación del
 scanner y también puede ser consumido por los archivos Spry.
+
+La librería de estructuras de datos usa el mismo mecanismo: los programas pueden
+incluir [`estructuras.h`](../librerias/estructuras.h), [`listas.asm`](../librerias/listas.asm)
+y [`matrices.asm`](../librerias/matrices.asm) con rutas relativas. La documentación
+de sus contratos y convenciones está en [`ESTRUCTURAS_DATOS.md`](ESTRUCTURAS_DATOS.md).
 
 La integración principal está en [`assembler.py`](../assembler.py): `assemble`
 preprocesa texto y `assemble_file` resuelve los includes relativos al archivo
