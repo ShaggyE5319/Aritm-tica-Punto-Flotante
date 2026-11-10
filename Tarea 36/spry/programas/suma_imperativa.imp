@@ -1,0 +1,10 @@
+// Suma los enteros del 1 al 10 y muestra 55 en el puerto 2.
+int contador = 1;
+int suma = 0;
+
+while contador <= 10 {
+    suma = suma + contador;
+    contador = contador + 1;
+}
+
+write suma;
