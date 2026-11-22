@@ -1,0 +1,4 @@
+#define PALABRA_BYTES 8
+#define DIRECCION_DATOS 0x200
+#define DIRECCION_PILA 0xFFF
+

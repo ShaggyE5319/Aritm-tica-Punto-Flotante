@@ -1,0 +1,153 @@
+; Libreria de listas (vectores) para SPRY.
+; Las listas son arreglos contiguos de palabras de 64 bits.
+; Convencion: R0 base, R1 longitud, R2 valor/segundo arreglo.
+; Las rutinas documentan sus registros de salida y temporales.
+
+VEC_SUM:
+    LDI R3, 0
+    LDI R4, 0
+    LDI R6, 8
+    MOV R5, R0
+VEC_SUM_LOOP:
+    CMP R7, R3, R1
+    JZ VEC_SUM_DONE
+    LOADR R8, R5, R7
+    ADD R4, R4, R8
+    ADD R5, R5, R6
+    INC R3
+    JMP VEC_SUM_LOOP
+VEC_SUM_DONE:
+    MOV R0, R4
+    RET
+
+VEC_FILL:
+    LDI R3, 0
+    LDI R5, 8
+    MOV R4, R0
+VEC_FILL_LOOP:
+    CMP R7, R3, R1
+    JZ VEC_FILL_DONE
+    STORER R7, R4, R2
+    ADD R4, R4, R5
+    INC R3
+    JMP VEC_FILL_LOOP
+VEC_FILL_DONE:
+    RET
+
+VEC_COPY:
+    LDI R3, 0
+    LDI R6, 8
+    MOV R4, R0
+    MOV R5, R2
+VEC_COPY_LOOP:
+    CMP R7, R3, R1
+    JZ VEC_COPY_DONE
+    LOADR R8, R4, R7
+    STORER R8, R5, R8
+    ADD R4, R4, R6
+    ADD R5, R5, R6
+    INC R3
+    JMP VEC_COPY_LOOP
+VEC_COPY_DONE:
+    RET
+
+; VEC_MERGE_SORT: orden ascendente de palabras sin signo.
+; Entradas: R0=origen, R1=longitud, R2=buffer temporal.
+; Salida: R0 contiene la base donde quedo el vector ordenado.
+VEC_MERGE_SORT:
+    LDI R3, 1
+VEC_MERGE_WIDTH:
+    CMP R14, R3, R1
+    JZ VEC_MERGE_DONE
+    JG VEC_MERGE_DONE
+    LDI R4, 0
+VEC_MERGE_RUN:
+    CMP R14, R4, R1
+    JZ VEC_MERGE_SWAP
+    JG VEC_MERGE_SWAP
+    MOV R5, R4
+    ADD R5, R5, R3
+    CMP R14, R5, R1
+    JL VEC_MERGE_MID_OK
+    MOV R5, R1
+VEC_MERGE_MID_OK:
+    MOV R6, R5
+    ADD R6, R6, R3
+    CMP R14, R6, R1
+    JL VEC_MERGE_RIGHT_OK
+    MOV R6, R1
+VEC_MERGE_RIGHT_OK:
+    MOV R7, R4
+    MOV R8, R5
+    MOV R9, R4
+VEC_MERGE_LOOP:
+    CMP R14, R7, R5
+    JZ VEC_MERGE_COPY_RIGHT
+    JG VEC_MERGE_COPY_RIGHT
+    CMP R14, R8, R6
+    JZ VEC_MERGE_COPY_LEFT
+    JG VEC_MERGE_COPY_LEFT
+    MOV R12, R7
+    MULI R12, 8
+    ADD R12, R12, R0
+    LOADR R10, R12, R14
+    MOV R12, R8
+    MULI R12, 8
+    ADD R12, R12, R0
+    LOADR R11, R12, R14
+    CMP R14, R10, R11
+    JG VEC_MERGE_TAKE_RIGHT
+    MOV R12, R9
+    MULI R12, 8
+    ADD R12, R12, R2
+    STORER R9, R12, R10
+    INC R7
+    JMP VEC_MERGE_ADVANCE
+VEC_MERGE_TAKE_RIGHT:
+    MOV R12, R9
+    MULI R12, 8
+    ADD R12, R12, R2
+    STORER R9, R12, R11
+    INC R8
+VEC_MERGE_ADVANCE:
+    INC R9
+    JMP VEC_MERGE_LOOP
+VEC_MERGE_COPY_LEFT:
+    CMP R14, R7, R5
+    JZ VEC_MERGE_RUN_DONE
+    MOV R12, R7
+    MULI R12, 8
+    ADD R12, R12, R0
+    LOADR R10, R12, R14
+    MOV R12, R9
+    MULI R12, 8
+    ADD R12, R12, R2
+    STORER R9, R12, R10
+    INC R7
+    INC R9
+    JMP VEC_MERGE_COPY_LEFT
+VEC_MERGE_COPY_RIGHT:
+    CMP R14, R8, R6
+    JZ VEC_MERGE_RUN_DONE
+    MOV R12, R8
+    MULI R12, 8
+    ADD R12, R12, R0
+    LOADR R10, R12, R14
+    MOV R12, R9
+    MULI R12, 8
+    ADD R12, R12, R2
+    STORER R9, R12, R10
+    INC R8
+    INC R9
+    JMP VEC_MERGE_COPY_RIGHT
+VEC_MERGE_RUN_DONE:
+    MOV R4, R6
+    JMP VEC_MERGE_RUN
+VEC_MERGE_SWAP:
+    MOV R14, R0
+    MOV R0, R2
+    MOV R2, R14
+    MULI R3, 2
+    JMP VEC_MERGE_WIDTH
+VEC_MERGE_DONE:
+    RET

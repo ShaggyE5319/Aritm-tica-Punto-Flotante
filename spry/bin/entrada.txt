@@ -1,0 +1,8 @@
+X = 5
+Y = 3
+Z = 2
+(X + Y) > (Z * 4) and true
+X >= 5 or Y < 2 and false
+not (X == Y) or (Z <= 1)
+X * Y - Z > 10 and not (Y == 3)
+(X - Y) / Z == 1
