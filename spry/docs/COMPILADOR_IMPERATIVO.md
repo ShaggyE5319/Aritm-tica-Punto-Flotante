@@ -61,4 +61,11 @@ clasifica tokens y el módulo Python los consume con métodos recursivos propios
 para reconocer sentencias y generar ensamblador. Esta etapa debe describirse
 como traducción educativa directa y no como una gramática YACC completa.
 
+## Diseño formal disponible
+
+La especificación formal E-BNF de la primera parte está en
+[`gramatica/SPRY.ebnf`](../gramatica/SPRY.ebnf), y la especificación léxica en
+[`gramatica/LEXICO_SPRY.ebnf`](../gramatica/LEXICO_SPRY.ebnf). Los archivos pueden
+cargarse directamente en el Railroad Diagram Generator de BottleCaps.
+
 ```

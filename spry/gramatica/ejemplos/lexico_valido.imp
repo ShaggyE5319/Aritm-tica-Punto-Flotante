@@ -1,0 +1,9 @@
+programa LexicoValido;
+inicio
+    entero contador = 10;
+    decimal valor = 3.14;
+    logico activo = verdadero;
+    arreglo vector[3] de entero = {1, 2, 3};
+    leer contador desde {35};
+    mostrar valor, activo;
+fin;

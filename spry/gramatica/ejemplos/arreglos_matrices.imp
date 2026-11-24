@@ -1,0 +1,8 @@
+programa Colecciones;
+inicio
+    arreglo numeros[5] de entero = {1, 2, 3, 4, 5};
+    matriz tabla[2, 2] de entero = {{1, 2}, {3, 4}};
+
+    entero suma = numeros[0] + tabla[1, 1];
+    mostrar suma;
+fin;

@@ -4,27 +4,37 @@ import re
 
 
 RESERVADAS = {
-    "programa", "inicio", "fin", "tipo",
-    "entero", "decimal", "logico", "memoria",
-    "repetir", "mientras", "si", "sino",
-    "mostrar", "leer", "desde", "hacia",
+    "programa", "inicio", "fin", "tipo", "tda",
+    "entero", "decimal", "logico", "caracter", "cadena", "memoria",
+    "arreglo", "matriz",
+    "repetir", "desde", "hasta", "paso", "mientras",
+    "si", "sino", "segun", "caso", "predeterminado",
+    "funcion", "procedimiento", "retornar", "void",
+    "leer", "mostrar", "desde", "hacia", "escribir", "de",
+    "nuevo", "publico", "privado", "constante",
+    "verdadero", "falso",
     # Compatibilidad con los ejemplos anteriores del proyecto.
     "type", "program", "int", "float", "while", "if", "else", "write",
 }
 
-TIPOS = {"entero", "decimal", "logico", "float", "int"}
+TIPOS = {
+    "entero", "decimal", "logico", "caracter", "cadena",
+    "memoria", "float", "int",
+}
 
 _TOKEN = re.compile(
     r"(?P<ESPACIO>[ \t\r\n]+)"
     r"|(?P<COMENTARIO_LINEA>//[^\n]*)"
     r"|(?P<COMENTARIO_BLOQUE>/\*[\s\S]*?\*/)"
+    r"|(?P<CADENA>\"(?:[^\"\\]|\\.)*\")"
+    r"|(?P<CARACTER>'(?:[^'\\]|\\.)')"
     r"|(?P<MEMORIA_INMEDIATA>\{(?:0[xX][0-9A-Fa-f]+|[0-9]+)\})"
     r"|(?P<HEXADECIMAL>0[xX][0-9A-Fa-f]+)"
     r"|(?P<REAL>(?:[0-9]+\.[0-9]*|\.[0-9]+)(?:[eE][+-]?[0-9]+)?)"
     r"|(?P<ENTERO>[+-]?[0-9]+)"
     r"|(?P<ID>[A-Za-z_][A-Za-z_0-9]*)"
-    r"|(?P<OPERADOR>==|!=|<=|>=|&&|\|\||[+\-*/%=<>&!~])"
-    r"|(?P<DELIMITADOR>[(){}\[\],;.])"
+    r"|(?P<OPERADOR>\+\+|--|<<|>>|==|!=|<=|>=|&&|\|\||\+=|-=|\*=|/=|%=|[+\-*/%=<>&!~?:])"
+    r"|(?P<DELIMITADOR>[(){}\[\],;.:])"
 )
 
 
@@ -47,7 +57,9 @@ def analizar(texto):
         lexema = match.group()
         categoria = match.lastgroup
         if categoria not in ("ESPACIO", "COMENTARIO_LINEA", "COMENTARIO_BLOQUE"):
-            if categoria == "ID" and lexema in TIPOS:
+            if categoria == "ID" and lexema in ("verdadero", "falso"):
+                categoria = "LITERAL_BOOLEANO"
+            elif categoria == "ID" and lexema in TIPOS:
                 categoria = "TIPO"
             elif categoria == "ID" and lexema in RESERVADAS:
                 categoria = "RESERVADA"

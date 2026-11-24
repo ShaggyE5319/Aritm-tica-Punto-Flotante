@@ -1,0 +1,8 @@
+programa PuntoFlotante;
+inicio
+    decimal radio = 2.5;
+    decimal pi = 3.141592653589793;
+    decimal area = pi * radio * radio;
+
+    mostrar "area=", area;
+fin;

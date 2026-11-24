@@ -28,6 +28,15 @@ completa todavía no forman parte de esta entrega. El actual
 `compilador_imperativo.py` consume lexemas como un traductor educativo directo
 a ensamblador.
 
+## Gramática y diseño léxico
+
+La gramática completa del lenguaje está en
+[`gramatica/SPRY.ebnf`](gramatica/SPRY.ebnf). La gramática léxica está en
+[`gramatica/LEXICO_SPRY.ebnf`](gramatica/LEXICO_SPRY.ebnf).
+
+Ambos archivos usan la notación `::=`, terminales entre comillas, `[ ]`,
+`{ }` y `|`, compatible con el Railroad Diagram Generator de BottleCaps.
+
 ## Pruebas y verificacion
 
 Ejecute todos los comandos desde `spry`.

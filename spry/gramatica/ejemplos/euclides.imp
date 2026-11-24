@@ -1,0 +1,14 @@
+programa Euclides;
+inicio
+    entero a = 48;
+    entero b = 18;
+    entero resto;
+
+    mientras (b != 0) {
+        resto = a % b;
+        a = b;
+        b = resto;
+    }
+
+    mostrar "mcd=", a;
+fin;

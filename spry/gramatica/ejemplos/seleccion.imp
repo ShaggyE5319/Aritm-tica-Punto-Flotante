@@ -1,0 +1,10 @@
+programa Seleccion;
+inicio
+    entero nota = 82;
+
+    si (nota >= 60) {
+        mostrar "Aprobado";
+    } sino {
+        mostrar "Reprobado";
+    }
+fin;

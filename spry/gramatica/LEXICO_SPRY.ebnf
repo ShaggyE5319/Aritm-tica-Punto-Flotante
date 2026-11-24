@@ -1,0 +1,86 @@
+UnidadLexica ::= (Espacio | Comentario | Token)*
+
+Espacio ::= EspacioHorizontal | SaltoLinea
+
+EspacioHorizontal ::= (" " | "\t")+
+
+SaltoLinea ::= "\r\n" | "\n" | "\r"
+
+Comentario ::= ComentarioLinea | ComentarioBloque
+
+ComentarioLinea ::= "//" (Letra | Digito | Operador | Delimitador | " "| "\t" | "_")* SaltoLinea?
+
+ComentarioBloque ::= "/*" (Letra | Digito | Operador | Delimitador | " "| "\t" | "\n"| "_" )* "*/"
+
+Token ::= PalabraReservada
+        | TipoPrimitivo
+        | LiteralBooleano
+        | LiteralNumero
+        | LiteralCadena
+        | LiteralCaracter
+        | DireccionInmediata
+        | Operador
+        | Delimitador
+        | Identificador
+
+PalabraReservada ::= "programa" | "inicio" | "fin" | "tipo" | "tda"
+                   | "arreglo" | "matriz" | "constante"
+                   | "repetir" | "desde" | "hasta" | "paso" | "mientras"
+                   | "si" | "sino" | "segun" | "caso" | "predeterminado"
+                   | "funcion" | "procedimiento" | "retornar" | "void"
+                   | "leer" | "mostrar" | "hacia" | "nuevo"
+                   | "publico" | "privado" | "romper" | "escribir" | "de"
+
+TipoPrimitivo ::= "entero" | "decimal" | "logico"
+                | "caracter" | "cadena" | "memoria"
+
+LiteralBooleano ::= "verdadero" | "falso"
+
+LiteralCadena ::= '"' CaracterCadena* '"'
+
+LiteralCaracter ::= "'" Caracter "'"
+
+LiteralNumero ::= LiteralReal | LiteralHexadecimal | LiteralEntero
+
+LiteralEntero ::= Signo? Digito+
+
+LiteralReal ::= Signo? (Digito+ "." Digito* | "." Digito+) Exponente?
+
+LiteralHexadecimal ::= Signo? "0" ("x" | "X") Hexadecimal+
+
+Exponente ::= ("e" | "E") Signo? Digito+
+
+DireccionInmediata ::= "{" (LiteralHexadecimalSinSigno | LiteralEnteroSinSigno) "}"
+
+LiteralHexadecimalSinSigno ::= "0" ("x" | "X") Hexadecimal+
+
+LiteralEnteroSinSigno ::= Digito+
+
+Operador ::= "++" | "--" | "<<" | ">>" | "==" | "!="
+           | "<=" | ">=" | "&&" | "||" | "+=" | "-="
+           | "*=" | "/=" | "%=" | "+" | "-" | "*" | "/"
+           | "%" | "=" | "<" | ">" | "!" | "~" | "?" | ":"
+
+Delimitador ::= "(" | ")" | "{" | "}" | "[" | "]" | "," | ";" | "."
+
+Identificador ::= InicioIdentificador ContinuacionIdentificador*
+
+InicioIdentificador ::= "_" | Letra
+
+ContinuacionIdentificador ::= "_" | Letra | Digito
+
+Letra ::= "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m"
+        | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+        | "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M"
+        | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z"
+
+Digito ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+
+Hexadecimal ::= Digito | "a" | "b" | "c" | "d" | "e" | "f"
+               | "A" | "B" | "C" | "D" | "E" | "F"
+
+Signo ::= "+" | "-"
+
+Caracter ::= Letra | Digito | "_" | "-" | "+" | "*" | "/" | " " 
+
+CaracterCadena ::= Letra | Digito | "_" | "-" | "+" | "*" | "/" | " " 

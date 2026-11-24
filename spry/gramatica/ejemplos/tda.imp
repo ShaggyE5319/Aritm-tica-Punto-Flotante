@@ -1,0 +1,12 @@
+programa TipoAbstracto;
+inicio
+    tda Punto {
+        entero x;
+        entero y;
+    };
+
+    Punto origen = nuevo Punto;
+    origen.x = 0;
+    origen.y = 0;
+    mostrar origen.x, origen.y;
+fin;

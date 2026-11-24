@@ -1,0 +1,219 @@
+Unidad ::= PreprocesadorDirectiva? DeclaracionGlobal* Programa
+
+PreprocesadorDirectiva ::= "#" Identificador CadenaLiteral?
+
+Programa ::= "programa" Identificador (":" Identificador)? ";" BloquePrograma
+          | BloqueImperativo
+
+BloquePrograma ::= "inicio" Declaracion* Sentencia* "fin" Identificador? ";"
+
+BloqueImperativo ::= (Declaracion | Sentencia)*
+
+DeclaracionGlobal ::= DeclaracionVariable
+                    | DeclaracionConstante
+                    | DeclaracionArreglo
+                    | DeclaracionMatriz
+                    | DeclaracionTDA
+                    | DeclaracionFuncion
+                    | DeclaracionProcedimiento
+
+Declaracion ::= DeclaracionVariable
+              | DeclaracionConstante
+              | DeclaracionArreglo
+              | DeclaracionMatriz
+              | DeclaracionTDA
+
+DeclaracionConstante ::= "constante" Tipo Identificador "=" Expresion ";"
+
+DeclaracionVariable ::= Tipo Identificador DimensionTipo? ("=" Expresion)? ";"
+
+DeclaracionArreglo ::= "arreglo" Identificador "[" Expresion "]" "de" Tipo
+                       ("=" ListaInicializacion)? ";"
+
+DeclaracionMatriz ::= "matriz" Identificador "[" Expresion "," Expresion "]" "de" Tipo
+                      ("=" ListaInicializacionMatriz)? ";"
+
+DimensionTipo ::= ("[" Expresion "]") ("[" Expresion "]")?
+
+ListaInicializacion ::= "{" Expresion ("," Expresion)* "}"
+
+ListaInicializacionMatriz ::= "{" ListaInicializacion ("," ListaInicializacion)* "}"
+
+Tipo ::= "entero"
+       | "decimal"
+       | "logico"
+       | "caracter"
+       | "cadena"
+       | "memoria"
+       | Identificador
+
+DeclaracionTDA ::= "tda" Identificador "{" CampoTDA+ "}" ";"
+
+CampoTDA ::= Tipo Identificador DimensionTipo? ("=" Expresion)? ";"
+
+DeclaracionFuncion ::= "funcion" Identificador "(" ListaParametros? ")" (":" Tipo)?
+                       BloqueSentencias
+
+DeclaracionProcedimiento ::= "procedimiento" Identificador "(" ListaParametros? ")"
+                             BloqueSentencias
+
+ListaParametros ::= Parametro ("," Parametro)*
+
+Parametro ::= "constante"? Tipo Identificador DimensionTipo?
+
+BloqueSentencias ::= "{" Declaracion* Sentencia* "}"
+
+Bloque ::= "{" Sentencia* "}"
+
+Sentencia ::= Bloque
+            | SentenciaAsignacion
+            | SentenciaSi
+            | SentenciaMientras
+            | SentenciaRepetir
+            | SentenciaDesde
+            | SentenciaSegun
+            | SentenciaLlamada
+            | SentenciaRetorno
+            | SentenciaEntrada
+            | SentenciaSalida
+            | SentenciaMemoria
+            | SentenciaRomper
+            | Declaracion
+            | ";"
+
+SentenciaAsignacion ::= Destino OperadorAsignacion Expresion ";"
+
+OperadorAsignacion ::= "=" | "+=" | "-=" | "*=" | "/=" | "%="
+
+SentenciaSi ::= "si" "(" Expresion ")" BloqueSentencias
+                ("sino" (SentenciaSi | BloqueSentencias))?
+
+SentenciaMientras ::= "mientras" "(" Expresion ")" BloqueSentencias
+
+SentenciaRepetir ::= "repetir" BloqueSentencias "mientras" "(" Expresion ")" ";"
+
+SentenciaDesde ::= "desde" Identificador "=" Expresion "hasta" Expresion
+                   ("paso" Expresion)? BloqueSentencias
+
+SentenciaSegun ::= "segun" "(" Expresion ")"
+                   "{" ("caso" Expresion ":" Sentencia*)*
+                   ("predeterminado" ":" Sentencia*)? "}"
+
+SentenciaLlamada ::= Llamada ";"
+
+SentenciaRetorno ::= "retornar" Expresion? ";"
+
+SentenciaEntrada ::= "leer" Destino ("," Destino)* ";"
+
+SentenciaSalida ::= "mostrar" Expresion ("," Expresion)* ";"
+
+SentenciaMemoria ::= "leer" Identificador "desde" DireccionMemoria ";"
+                   | "escribir" Expresion "hacia" DireccionMemoria ";"
+
+SentenciaRomper ::= "romper" ";"
+
+Destino ::= Identificador DimensionDestino? AccesoCampo?
+
+DimensionDestino ::= "[" Expresion "]" ("[" Expresion "]")?
+
+AccesoCampo ::= "." Identificador DimensionDestino?
+
+DireccionMemoria ::= "{" ExpresionDireccion "}"
+
+ExpresionDireccion ::= LiteralEntero | LiteralHexadecimal
+
+Llamada ::= Identificador "(" ListaArgumentos? ")"
+
+ListaArgumentos ::= Expresion ("," Expresion)*
+
+Expresion ::= ExpresionTernaria
+
+ExpresionTernaria ::= ExpresionOr ("?" Expresion ":" ExpresionTernaria)?
+
+ExpresionOr ::= ExpresionAnd ("||" ExpresionAnd)*
+
+ExpresionAnd ::= ExpresionIgualdad ("&&" ExpresionIgualdad)*
+
+ExpresionIgualdad ::= ExpresionRelacional (OperadorIgualdad ExpresionRelacional)*
+
+OperadorIgualdad ::= "==" | "!="
+
+ExpresionRelacional ::= ExpresionDesplazamiento
+                        (OperadorRelacional ExpresionDesplazamiento)*
+
+OperadorRelacional ::= "<" | "<=" | ">" | ">="
+
+ExpresionDesplazamiento ::= ExpresionAditiva
+                            (("<<" | ">>") ExpresionAditiva)*
+
+ExpresionAditiva ::= ExpresionMultiplicativa
+                     (OperadorAditivo ExpresionMultiplicativa)*
+
+OperadorAditivo ::= "+" | "-"
+
+ExpresionMultiplicativa ::= ExpresionUnaria
+                            (OperadorMultiplicativo ExpresionUnaria)*
+
+OperadorMultiplicativo ::= "*" | "/" | "%"
+
+ExpresionUnaria ::= OperadorUnario ExpresionUnaria
+                  | ExpresionPostfija
+
+OperadorUnario ::= "+" | "-" | "!" | "~"
+
+ExpresionPostfija ::= Factor Postfijo*
+
+Postfijo ::= "[" Expresion "]"
+           | "." Identificador
+           | "++"
+           | "--"
+           | LlamadaPostfijo
+
+LlamadaPostfijo ::= "(" ListaArgumentos? ")"
+
+Factor ::= Literal
+         | Identificador
+         | DireccionMemoria
+         | Constructor
+         | "(" Expresion ")"
+
+Constructor ::= "nuevo" Identificador ("(" ListaArgumentos? ")")?
+
+Literal ::= LiteralEntero
+          | LiteralHexadecimal
+          | LiteralDecimal
+          | LiteralBooleano
+          | LiteralCaracter
+          | CadenaLiteral
+
+LiteralEntero ::= Signo? Digito+
+
+LiteralHexadecimal ::= Signo? "0" ("x" | "X") Hexadecimal+
+
+LiteralDecimal ::= Signo? (Digito+ "." Digito* | "." Digito+) Exponente?
+
+Exponente ::= ("e" | "E") Signo? Digito+
+
+LiteralBooleano ::= "verdadero" | "falso"
+
+LiteralCaracter ::= "'" Caracter "'"
+
+CadenaLiteral ::= '"' CaracterCadena* '"'
+
+Signo ::= "+" | "-"
+
+Identificador ::= Letra (Letra | Digito | "_")*
+
+Letra ::= "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m"
+        | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+        | "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M"
+        | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z"
+
+Digito ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+
+Hexadecimal ::= Digito | "a" | "b" | "c" | "d" | "e" | "f"
+               | "A" | "B" | "C" | "D" | "E" | "F"
+
+Caracter ::= Letra | Digito | "_" | "-" | "+" | "*" | "/" | " " 
+
+CaracterCadena ::= Letra | Digito | "_" | "-" | "+" | "*" | "/" | " " 
